@@ -14,6 +14,7 @@ const ENV = process.env.NODE_ENV;
       isGlobal: true,
       cache: true,
       expandVariables: true,
+      load: [applicationConfig],
     }),
     TypeOrmModule.forRoot(typeormOptions),
   ],
