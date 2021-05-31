@@ -37,4 +37,4 @@ lerna-debug.log*
 .env.local
 
 # Sqlite database
-db/data
+db/*
