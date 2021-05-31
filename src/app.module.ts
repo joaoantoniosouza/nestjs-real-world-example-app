@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeormOptions } from './config/typeorm.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UserModule } from './user/user.module';
+import { applicationConfig, typeormConfig } from './config';
 
 const ENV = process.env.NODE_ENV;
 
@@ -16,7 +17,8 @@ const ENV = process.env.NODE_ENV;
       expandVariables: true,
       load: [applicationConfig],
     }),
-    TypeOrmModule.forRoot(typeormOptions),
+    TypeOrmModule.forRoot(typeormConfig),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
