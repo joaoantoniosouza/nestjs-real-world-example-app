@@ -16,32 +16,13 @@ export class UserService {
     return this.userRepository.find();
   }
 
+  async findByEmail(email: string): Promise<UserEntity> {
+    return this.userRepository.findOne({ where: email });
+  }
+
   async create(userData: UserCreateDTO): Promise<UserEntity> {
     const newUser = this.userRepository.create(userData);
 
     return this.userRepository.save(newUser);
-  }
-
-  async authenticate({ email, password }: UserLoginDTO): Promise<UserEntity> {
-    const user = await this.userRepository.findOne({
-      where: { email },
-    });
-
-    if (!user) {
-      throw new HttpException('Email não cadastrado', HttpStatus.NOT_FOUND);
-    }
-
-    if (await this.passwordIsCorrect(user.password, password)) {
-      return user;
-    }
-
-    throw new HttpException('Não autorizado', HttpStatus.UNAUTHORIZED);
-  }
-
-  private async passwordIsCorrect(
-    userPassword: string,
-    credentialPassword: string,
-  ) {
-    return HashTool.isMatch(credentialPassword, userPassword);
   }
 }

@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { applicationConfig, typeormConfig } from './config';
+import { AuthModule } from './auth/auth.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -19,6 +20,7 @@ const ENV = process.env.NODE_ENV;
     }),
     TypeOrmModule.forRoot(typeormConfig),
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

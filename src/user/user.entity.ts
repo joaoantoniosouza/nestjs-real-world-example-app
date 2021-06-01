@@ -58,4 +58,8 @@ export class UserEntity implements UserData {
       this.password = await HashTool.generate(this.password);
     }
   }
+
+  async checkPassword(password: string) {
+    return HashTool.isMatch(password, this.password);
+  }
 }
