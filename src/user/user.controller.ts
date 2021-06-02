@@ -2,7 +2,9 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Get,
   Post,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { HashTool } from '~/shared/security/hash';
@@ -12,6 +14,7 @@ import {
   AuthCredentialsDTO,
   UserLoginReadDTO,
 } from './dto';
+import { JwtAuthGuard } from './guards/jwt.guard';
 import { UserService } from './user.service';
 
 @Controller()
@@ -35,5 +38,13 @@ export class UserController {
     const user = await this.userService.create(userData);
 
     return new UserReadDTO(user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('user')
+  async findAll() {
+    const users = await this.userService.findAll();
+
+    return users.map((user) => new UserReadDTO(user));
   }
 }
