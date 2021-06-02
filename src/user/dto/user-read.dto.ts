@@ -6,11 +6,12 @@ export class UserReadDTO implements UserData {
 
   readonly username: string;
 
-  readonly password: string;
-
   readonly bio?: string;
 
   readonly image?: string;
+
+  @Exclude()
+  readonly password: string;
 
   @Exclude()
   readonly id: number;

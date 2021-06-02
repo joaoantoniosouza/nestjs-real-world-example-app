@@ -1,15 +1,18 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserCreateDTO, UserLoginDTO } from './dto';
+import { UserCreateDTO, AuthCredentialsDTO } from './dto';
 import { UserEntity } from './user.entity';
 import { HashTool } from '@security/hash';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private readonly hashTool: HashTool,
+    private readonly jwtService: JwtService,
   ) {}
 
   async findAll(): Promise<UserEntity[]> {
@@ -17,12 +20,48 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<UserEntity> {
-    return this.userRepository.findOne({ where: email });
+    return this.userRepository.findOne({ where: { email } });
   }
 
   async create(userData: UserCreateDTO): Promise<UserEntity> {
     const newUser = this.userRepository.create(userData);
 
     return this.userRepository.save(newUser);
+  }
+
+  async login({ email, password }: AuthCredentialsDTO) {
+    const validatedUser = await this.validateUser(email, password);
+
+    if (!validatedUser) {
+      throw new UnauthorizedException();
+    }
+
+    const accessToken = await this.generateJwtToken(
+      validatedUser.username,
+      validatedUser.id,
+    );
+
+    return { user: validatedUser, accessToken };
+  }
+
+  private async validateUser(
+    email: string,
+    password: string,
+  ): Promise<UserEntity> {
+    const user = await this.findByEmail(email);
+
+    if (user && (await this.checkPassword(password, user.password))) {
+      return user;
+    }
+
+    return null;
+  }
+
+  private async checkPassword(password, passwordHash) {
+    return this.hashTool.isMatch(password, passwordHash);
+  }
+
+  private async generateJwtToken(username: string, sub: number) {
+    return this.jwtService.sign({ username, sub });
   }
 }

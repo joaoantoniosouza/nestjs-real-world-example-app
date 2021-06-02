@@ -1,7 +1,9 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsString } from 'class-validator';
 import { UserData } from '../user.interface';
 
-export class UserLoginDTO implements Pick<UserData, 'email' | 'password'> {
+export class AuthCredentialsDTO
+  implements Pick<UserData, 'email' | 'password'>
+{
   @IsNotEmpty()
   @IsEmail()
   readonly email: string;

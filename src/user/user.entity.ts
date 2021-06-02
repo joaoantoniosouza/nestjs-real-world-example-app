@@ -10,6 +10,7 @@ import { UserData } from './user.interface';
 
 @Entity('users')
 export class UserEntity implements UserData {
+  constructor(private readonly hash: HashTool) {}
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -49,17 +50,13 @@ export class UserEntity implements UserData {
 
   @BeforeInsert()
   async hashPassword() {
-    this.password = await HashTool.generate(this.password);
+    this.password = await this.hash.generate(this.password);
   }
 
   @BeforeUpdate()
   async updatePasswordHash() {
     if (this.password) {
-      this.password = await HashTool.generate(this.password);
+      this.password = await this.hash.generate(this.password);
     }
-  }
-
-  async checkPassword(password: string) {
-    return HashTool.isMatch(password, this.password);
   }
 }

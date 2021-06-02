@@ -11,18 +11,18 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<UserEntity> {
-    console.log('AuthService', email, password);
     const user = await this.userService.findByEmail(email);
 
-    if (user && user.checkPassword(password)) {
+    if (user) {
       return user;
     }
 
     return null;
   }
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+  async login(user: UserEntity) {
+    const payload = { username: user.username, sub: user.id };
+
     return {
       access_token: this.jwtService.sign(payload),
     };
