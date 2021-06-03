@@ -7,8 +7,15 @@ import {
   UseGuards,
   UseInterceptors,
   Request,
+  Put,
 } from '@nestjs/common';
-import { UserCreateDTO, UserReadDTO, UserLoginReadDTO } from './dto';
+import { User } from './decoratos/user.decorator';
+import {
+  UserCreateDTO,
+  UserReadDTO,
+  UserLoginReadDTO,
+  UserUpdateDTO,
+} from './dto';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { UserService } from './user.service';
@@ -34,11 +41,19 @@ export class UserController {
     return new UserReadDTO(user);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(JwtAuthGuard)
   @Get('user')
-  async findAll() {
-    const users = await this.userService.findAll();
+  async findAll(@Request() req) {
+    const user = await this.userService.findById(req.user.id);
+    return new UserReadDTO(user);
+  }
 
-    return users.map((user) => new UserReadDTO(user));
+  @UseGuards(JwtAuthGuard)
+  @Put('user')
+  async update(@User('id') userId: number, @Body('user') user: UserUpdateDTO) {
+    const userUpdated = await this.userService.update(userId, user);
+
+    return new UserReadDTO(userUpdated);
   }
 }

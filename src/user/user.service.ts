@@ -1,7 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserCreateDTO, AuthCredentialsDTO } from './dto';
+import { UserCreateDTO, UserUpdateDTO } from './dto';
 import { UserEntity } from './user.entity';
 import { HashTool } from '@security/hash';
 import { JwtService } from '@nestjs/jwt';
@@ -16,8 +20,8 @@ export class UserService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async findAll(): Promise<UserEntity[]> {
-    return this.userRepository.find();
+  async findById(id: number): Promise<UserEntity> {
+    return this.userRepository.findOne(id);
   }
 
   async findByEmail(email: string): Promise<UserEntity> {
@@ -28,6 +32,18 @@ export class UserService {
     const newUser = this.userRepository.create(userData);
 
     return this.userRepository.save(newUser);
+  }
+
+  async update(userId: number, userData: UserUpdateDTO) {
+    const user = await this.userRepository.findOne(userId, {
+      select: ['id', 'email', 'bio', 'image'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    return this.userRepository.save({ ...user, ...userData });
   }
 
   async login(user: UserEntity): Promise<AuthenticatedUser> {
