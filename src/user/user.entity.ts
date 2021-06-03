@@ -8,9 +8,10 @@ import {
 import { HashTool } from '~/shared/security/hash';
 import { UserData } from './user.interface';
 
+const hashTool = new HashTool();
+
 @Entity('users')
 export class UserEntity implements UserData {
-  constructor(private readonly hash: HashTool) {}
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -50,13 +51,13 @@ export class UserEntity implements UserData {
 
   @BeforeInsert()
   async hashPassword() {
-    this.password = await this.hash.generate(this.password);
+    this.password = await hashTool.generate(this.password);
   }
 
   @BeforeUpdate()
   async updatePasswordHash() {
     if (this.password) {
-      this.password = await this.hash.generate(this.password);
+      this.password = await hashTool.generate(this.password);
     }
   }
 }
