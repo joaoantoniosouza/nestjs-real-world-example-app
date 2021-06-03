@@ -6,30 +6,24 @@ import {
   Post,
   UseGuards,
   UseInterceptors,
+  Request,
 } from '@nestjs/common';
-import { HashTool } from '~/shared/security/hash';
-import {
-  UserCreateDTO,
-  UserReadDTO,
-  AuthCredentialsDTO,
-  UserLoginReadDTO,
-} from './dto';
+import { UserCreateDTO, UserReadDTO, UserLoginReadDTO } from './dto';
 import { JwtAuthGuard } from './guards/jwt.guard';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 import { UserService } from './user.service';
 
 @Controller()
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly hash: HashTool,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @UseGuards(LocalAuthGuard)
   @Post('users/login')
-  async login(@Body('user') authCredentials: AuthCredentialsDTO) {
-    const { user, accessToken } = await this.userService.login(authCredentials);
-    this.hash.generate('asdf');
-    return new UserLoginReadDTO(user, accessToken);
+  async login(@Request() req) {
+    const authenticatedUser = await this.userService.login(req.user);
+
+    return new UserLoginReadDTO(authenticatedUser);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)

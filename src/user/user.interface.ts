@@ -5,3 +5,8 @@ export interface UserData {
   bio?: string;
   image?: string;
 }
+
+export interface AuthenticatedUser {
+  user: UserData;
+  token: string;
+}

@@ -5,6 +5,7 @@ import { UserCreateDTO, AuthCredentialsDTO } from './dto';
 import { UserEntity } from './user.entity';
 import { HashTool } from '@security/hash';
 import { JwtService } from '@nestjs/jwt';
+import { AuthenticatedUser } from './user.interface';
 
 @Injectable()
 export class UserService {
@@ -29,25 +30,13 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-  async login({ email, password }: AuthCredentialsDTO) {
-    const validatedUser = await this.validateUser(email, password);
+  async login(user: UserEntity): Promise<AuthenticatedUser> {
+    const jwtToken = await this.generateJwtToken(user.username, user.id);
 
-    if (!validatedUser) {
-      throw new UnauthorizedException();
-    }
-
-    const accessToken = await this.generateJwtToken(
-      validatedUser.username,
-      validatedUser.id,
-    );
-
-    return { user: validatedUser, accessToken };
+    return { user: user, token: jwtToken };
   }
 
-  private async validateUser(
-    email: string,
-    password: string,
-  ): Promise<UserEntity> {
+  async validateUser(email: string, password: string): Promise<UserEntity> {
     const user = await this.findByEmail(email);
 
     if (user && (await this.checkPassword(password, user.password))) {
