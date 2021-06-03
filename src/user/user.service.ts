@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserCreateDTO, UserUpdateDTO } from './dto';
@@ -62,7 +58,7 @@ export class UserService {
     return null;
   }
 
-  private async checkPassword(password, passwordHash) {
+  private async checkPassword(password: string, passwordHash: string) {
     return this.hashTool.isMatch(password, passwordHash);
   }
 
