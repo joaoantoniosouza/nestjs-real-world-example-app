@@ -5,7 +5,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { HashTool } from '@security/hash';
+import { HashTool } from '~/shared/security/hash';
 import { UserData } from './user.interface';
 
 @Entity('users')

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserCreateDTO, UserUpdateDTO } from './dto';
 import { UserEntity } from './user.entity';
-import { HashTool } from '@security/hash';
+import { HashTool } from '~/shared/security/hash';
 import { JwtService } from '@nestjs/jwt';
 import { AuthenticatedUser } from './user.interface';
 
