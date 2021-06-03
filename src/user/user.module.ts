@@ -18,6 +18,6 @@ import { UserService } from './user.service';
   ],
   providers: [UserService, HashTool],
   controllers: [UserController],
-  exports: [UserService],
+  exports: [UserService, JwtModule],
 })
 export class UserModule {}
