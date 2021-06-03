@@ -11,7 +11,7 @@ const ENV = process.env.NODE_ENV;
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [`.env.${ENV}.local`, `.env.${ENV}`, '.env'],
+      envFilePath: [`.env.${ENV}.local`, `.env.${ENV}`, '.env', '.env.example'],
       isGlobal: true,
       cache: true,
       expandVariables: true,
