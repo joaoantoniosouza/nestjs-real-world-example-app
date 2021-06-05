@@ -3,8 +3,10 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ArticleEntity } from '~/article/article.entity';
 import { HashTool } from '~/shared/security/hash';
 import { UserData } from './user.interface';
 
@@ -41,6 +43,9 @@ export class UserEntity implements UserData {
     default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @OneToMany(() => ArticleEntity, (article) => article.author)
+  articles: ArticleEntity[];
 
   @BeforeUpdate()
   setUpdatedDate() {
