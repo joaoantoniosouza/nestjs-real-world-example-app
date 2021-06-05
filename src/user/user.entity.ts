@@ -18,7 +18,7 @@ export class UserEntity implements UserData {
   @Column({ nullable: false, unique: true })
   username: string;
 
-  @Column({ name: 'password_hash' })
+  @Column({ nullable: false })
   password: string;
 
   @Column({ nullable: false, unique: true })
@@ -31,14 +31,12 @@ export class UserEntity implements UserData {
   image?: string;
 
   @Column({
-    name: 'create_at',
     type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
 
   @Column({
-    name: 'updated_at',
     type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
   })
