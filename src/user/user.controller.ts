@@ -9,7 +9,7 @@ import {
   Request,
   Put,
 } from '@nestjs/common';
-import { User } from './decoratos/user.decorator';
+import { User } from './decorators/user.decorator';
 import {
   UserCreateDTO,
   UserReadDTO,
