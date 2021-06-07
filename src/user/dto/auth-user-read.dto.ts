@@ -1,4 +1,4 @@
-import { AuthenticatedUser, UserData } from '../user.interface';
+import { AuthenticatedUser } from '../user.interface';
 import { UserReadDTO } from './user-read.dto';
 
 export class UserLoginReadDTO extends UserReadDTO {
