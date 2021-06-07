@@ -41,6 +41,8 @@ export class UserEntity implements UserData {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  following: boolean;
+
   @OneToMany(() => ArticleEntity, (article) => article.author)
   articles: ArticleEntity[];
 
