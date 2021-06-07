@@ -1,7 +1,6 @@
-import { Exclude } from 'class-transformer';
 import { UserData } from '../user.interface';
 
-export class UserReadDTO implements UserData {
+export class UserReadDTO {
   readonly email: string;
 
   readonly username: string;
@@ -10,19 +9,10 @@ export class UserReadDTO implements UserData {
 
   readonly image?: string;
 
-  @Exclude()
-  readonly password: string;
-
-  @Exclude()
-  readonly id: number;
-
-  @Exclude()
-  readonly createdAt: Date;
-
-  @Exclude()
-  readonly updatedAt: Date;
-
   constructor(user: UserData) {
-    Object.assign(this, user);
+    this.email = user.email;
+    this.username = user.username;
+    this.bio = user.bio;
+    this.image = user.image;
   }
 }
