@@ -2,9 +2,11 @@ import {
   BeforeInsert,
   BeforeUpdate,
   Column,
+  CreateDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { ArticleEntity } from '~/article/article.entity';
 import { HashTool } from '~/shared/security/hash';
@@ -32,16 +34,10 @@ export class UserEntity implements UserData {
   @Column({ nullable: true })
   image?: string;
 
-  @Column({
-    type: 'datetime',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column({
-    type: 'datetime',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @OneToMany(() => ArticleEntity, (article) => article.author)
