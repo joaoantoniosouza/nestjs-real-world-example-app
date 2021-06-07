@@ -21,7 +21,7 @@ export class LocalAuthGuard implements CanActivate {
     const user = await this.userService.validateUser(email, password);
 
     if (!user) {
-      throw new UnauthorizedException('Email ou password incorretos');
+      throw new UnauthorizedException('Email ou senha incorretos');
     }
 
     request.user = user;
