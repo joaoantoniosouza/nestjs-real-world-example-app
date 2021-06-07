@@ -71,7 +71,7 @@ export class ProfileService {
 
     const follow = await this.getFollow(userId, profile.id);
 
-    await this.followsRepository.delete(follow.id);
+    await this.followsRepository.delete(follow);
 
     return {
       profile,
