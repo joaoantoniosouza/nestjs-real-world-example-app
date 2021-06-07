@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ArticleEntity } from '~/article/article.entity';
+import { FollowEntity } from '~/profile/follow.entity';
 import { HashTool } from '~/shared/security/hash';
 import { UserData } from './user.interface';
 
@@ -52,6 +53,12 @@ export class UserEntity implements UserData {
   async hashPassword() {
     this.password = await hashTool.generate(this.password);
   }
+
+  @OneToMany(() => FollowEntity, (follow) => follow.follower)
+  followers: UserEntity[];
+
+  @OneToMany(() => FollowEntity, (follow) => follow.following)
+  follows: UserEntity[];
 
   @BeforeUpdate()
   async updatePasswordHash() {
