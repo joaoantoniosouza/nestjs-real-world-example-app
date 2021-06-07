@@ -27,7 +27,7 @@ export class ProfileService {
     return profile;
   }
 
-  private async getFollow(userId, profileId) {
+  private async getFollow(userId: number, profileId: number) {
     return this.followsRepository.findOne({
       where: {
         followerId: userId,
@@ -40,10 +40,9 @@ export class ProfileService {
     const profile = await this.getProfileByUsername(username);
     const follow = await this.getFollow(userId, profile.id);
 
-    return {
-      profile,
-      isFollowing: !!follow,
-    };
+    profile.following = !!follow;
+
+    return profile;
   }
 
   async followUser(username: string, userId: number) {
@@ -60,10 +59,9 @@ export class ProfileService {
       await this.followsRepository.save(newFollow);
     }
 
-    return {
-      profile,
-      isFollowing: true,
-    };
+    profile.following = true;
+
+    return profile;
   }
 
   async unfollowUser(username: string, userId: number) {
@@ -73,9 +71,8 @@ export class ProfileService {
 
     await this.followsRepository.delete(follow);
 
-    return {
-      profile,
-      isFollowing: false,
-    };
+    profile.following = false;
+
+    return profile;
   }
 }

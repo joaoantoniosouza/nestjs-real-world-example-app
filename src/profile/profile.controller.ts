@@ -24,12 +24,9 @@ export class ProfileController {
     @Param('username') username: string,
     @User('id') userId: number,
   ) {
-    const { profile, isFollowing } = await this.profileService.findProfile(
-      username,
-      userId,
-    );
+    const profile = await this.profileService.findProfile(username, userId);
 
-    return new ProfileReadDTO(profile, isFollowing);
+    return new ProfileReadDTO(profile);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -39,12 +36,9 @@ export class ProfileController {
     @Param('username') username: string,
     @User('id') userId: number,
   ) {
-    const { profile, isFollowing } = await this.profileService.followUser(
-      username,
-      userId,
-    );
+    const profile = await this.profileService.followUser(username, userId);
 
-    return new ProfileReadDTO(profile, isFollowing);
+    return new ProfileReadDTO(profile);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -54,11 +48,8 @@ export class ProfileController {
     @Param('username') username: string,
     @User('id') userId: number,
   ) {
-    const { profile, isFollowing } = await this.profileService.unfollowUser(
-      username,
-      userId,
-    );
+    const profile = await this.profileService.unfollowUser(username, userId);
 
-    return new ProfileReadDTO(profile, isFollowing);
+    return new ProfileReadDTO(profile);
   }
 }
