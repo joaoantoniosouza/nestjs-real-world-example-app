@@ -44,7 +44,7 @@ export class UserController {
   @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(JwtAuthGuard)
   @Get('user')
-  async findAll(@Request() req) {
+  async findUser(@Request() req) {
     const user = await this.userService.findById(req.user.id);
 
     return new UserReadDTO(user);
