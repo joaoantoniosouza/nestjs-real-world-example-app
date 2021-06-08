@@ -28,17 +28,6 @@ export class ArticleService {
 
   async create(articleData: ArticleUpdateDTO, userId: number) {
     const newArticle = this.articleRepository.create(articleData);
-    newArticle.slugifyTitle();
-
-    const article = await this.articleRepository.findOne({
-      where: {
-        slug: newArticle.slug,
-      },
-    });
-
-    if (article) {
-      throw new BadRequestException('Existe um artigo com o mesmo título.');
-    }
 
     const author = await this.userRepository.findOne(userId);
     newArticle.author = author;

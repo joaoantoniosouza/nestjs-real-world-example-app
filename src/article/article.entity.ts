@@ -58,6 +58,7 @@ export class ArticleEntity implements ArticleData {
   @BeforeUpdate()
   @BeforeInsert()
   slugifyTitle() {
-    this.slug = slug.slugify(this.title, { lower: true });
+    this.slug =
+      slug.slugify(this.title, { lower: true }) + '-' + new Date().getTime();
   }
 }
