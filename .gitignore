@@ -41,3 +41,4 @@ lerna-debug.log*
 
 # Sqlite database
 db/*
+.env.production
