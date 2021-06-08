@@ -10,6 +10,7 @@ export const developmentConfig: TypeOrmModuleOptions = {
 const productionConfig: TypeOrmModuleOptions = {
   type: 'postgres',
   url: process.env.DATABASE_URL,
+  ssl: true,
   logging: false,
 };
 
