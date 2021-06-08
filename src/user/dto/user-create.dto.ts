@@ -5,6 +5,7 @@ import {
   IsAlphanumeric,
   IsUrl,
   MinLength,
+  IsOptional,
 } from 'class-validator';
 import { UserData } from '../user.interface';
 
@@ -27,5 +28,6 @@ export class UserCreateDTO implements UserData {
   readonly bio?: string;
 
   @IsUrl()
+  @IsOptional()
   readonly image?: string;
 }
