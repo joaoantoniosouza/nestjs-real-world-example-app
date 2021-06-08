@@ -19,7 +19,7 @@ const ENV = process.env.NODE_ENV;
       expandVariables: true,
       load: [applicationConfig],
     }),
-    TypeOrmModule.forRoot(typeormConfig),
+    TypeOrmModule.forRoot(typeormConfig()),
     UserModule,
     ArticleModule,
     ProfileModule,
