@@ -6,15 +6,8 @@ import { ArticleEntity } from './article.entity';
 import { CommentEntity } from './comment.entity';
 import { ArticleUpdateDTO, ArticleCreateDTO } from './dto';
 import { CommentCreateDTO } from './dto/comment-create.dto';
+import { ListArticlesQuery } from './dto/list-articles-query.dto';
 import { ArticleNotFoundException } from './exceptions/article-not-found.exception';
-
-type ListOptions = {
-  tag?: string;
-  author?: string;
-  favoritedByUser?: string;
-  limit?: number;
-  offset?: number;
-};
 
 @Injectable()
 export class ArticleService {
@@ -65,11 +58,10 @@ export class ArticleService {
     });
   }
 
-  async listAll(options: ListOptions): Promise<ArticleEntity[]> {
+  async listAll(options: ListArticlesQuery): Promise<ArticleEntity[]> {
     const query = this.articleRepository
       .createQueryBuilder('article')
-      .innerJoinAndSelect('article.author', 'author')
-      .innerJoinAndSelect('author.follows', 'followers');
+      .innerJoinAndSelect('article.author', 'author');
 
     if (options.author) {
       query.where('author.username = :username', { username: options.author });

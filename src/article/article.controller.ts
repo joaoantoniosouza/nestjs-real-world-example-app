@@ -20,6 +20,7 @@ import {
   CommentCreateDTO,
   CommentReadDTO,
 } from './dto';
+import { ListArticlesQuery } from './dto/list-articles-query.dto';
 import { MultipleArticleReadDTO } from './dto/multiple-articles-read.dto';
 import { ArticleAuthorizationGuard } from './guard/article-authorization.guard';
 
@@ -39,13 +40,11 @@ export class ArticleController {
   }
 
   @Get()
-  async listAllArticles(@Query() query: any) {
+  async listAllArticles(@Query() query: ListArticlesQuery) {
     const allArticles = await this.articleService.listAll({
       author: query.author,
-      favoritedByUser: query.favorited,
       limit: query.limit,
       offset: query.offset,
-      tag: query.tag,
     });
 
     return new MultipleArticleReadDTO(allArticles);
