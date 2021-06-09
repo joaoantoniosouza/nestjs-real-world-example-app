@@ -1,6 +1,5 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -9,26 +8,30 @@ import {
   Put,
   Query,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { User } from '~/user/decorators/user.decorator';
 import { JwtAuthGuard } from '~/user/guards/jwt.guard';
 import { ArticleService } from './article.service';
-import { ArticleUpdateDTO, ArticleReadDTO } from './dto';
-import { CommentCreateDTO } from './dto/comment-create.dto';
-import { CommentReadDTO } from './dto/comment-read.dto';
+import {
+  ArticleUpdateDTO,
+  ArticleCreateDTO,
+  ArticleReadDTO,
+  MultipleCommentReadDTO,
+  CommentCreateDTO,
+  CommentReadDTO,
+} from './dto';
+import { MultipleArticleReadDTO } from './dto/multiple-articles-read.dto';
 import { ArticleAuthorizationGuard } from './guard/article-authorization.guard';
 
 @Controller('articles')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(
     @User('id') userId: number,
-    @Body('article') articleData: ArticleUpdateDTO,
+    @Body('article') articleData: ArticleCreateDTO,
   ) {
     const newArticle = await this.articleService.create(articleData, userId);
 
@@ -45,26 +48,18 @@ export class ArticleController {
       tag: query.tag,
     });
 
-    const articles = allArticles.map((article) => new ArticleReadDTO(article));
-
-    return { articles, articlesCount: articles.length };
+    return new MultipleArticleReadDTO(allArticles);
   }
 
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(ClassSerializerInterceptor)
   @Get('feed')
   async getFeed(@User('id') userId: number) {
-    const articles = await this.articleService.getFeed(userId);
-    const feed = articles.map((article) => new ArticleReadDTO(article));
+    const feed = await this.articleService.getFeed(userId);
 
-    return {
-      articles: feed,
-      articleCount: articles.length,
-    };
+    return new MultipleArticleReadDTO(feed);
   }
 
   @UseGuards(ArticleAuthorizationGuard)
-  @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(JwtAuthGuard)
   @Put(':slug')
   async update(
@@ -73,7 +68,7 @@ export class ArticleController {
   ) {
     const article = await this.articleService.update(slug, articleData);
 
-    return { article: new ArticleReadDTO(article) };
+    return new ArticleReadDTO(article);
   }
 
   @UseGuards(ArticleAuthorizationGuard)
@@ -90,7 +85,7 @@ export class ArticleController {
   async favorite(@Param('slug') slug: string, @User('id') userId: number) {
     const article = await this.articleService.favorite(userId, slug);
 
-    return { article: new ArticleReadDTO(article) };
+    return new ArticleReadDTO(article);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -98,7 +93,7 @@ export class ArticleController {
   async unFavorite(@Param('slug') slug: string, @User('id') userId: number) {
     const article = await this.articleService.unFavorite(userId, slug);
 
-    return { article: new ArticleReadDTO(article) };
+    return new ArticleReadDTO(article);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -106,7 +101,7 @@ export class ArticleController {
   async getComments(@Param('slug') slug: string) {
     const comments = await this.articleService.getComments(slug);
 
-    return comments.map((comment) => new CommentReadDTO(comment));
+    return new MultipleCommentReadDTO(comments);
   }
 
   @UseGuards(JwtAuthGuard)
