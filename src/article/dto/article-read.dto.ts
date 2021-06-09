@@ -10,6 +10,8 @@ export class ArticleReadDTO {
   readonly favorited: boolean;
   readonly favoritesCount: number;
   readonly author: ProfileReadDTO;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
 
   constructor(article: ArticleEntity) {
     this.slug = article.slug;
@@ -18,6 +20,8 @@ export class ArticleReadDTO {
     this.body = article.body;
     this.favoritesCount = article.favoritesCount;
     this.favorited = article.favorited;
+    this.createdAt = article.createdAt;
+    this.updatedAt = article.updatedAt;
     this.author = article.author && new ProfileReadDTO(article.author);
   }
 }
