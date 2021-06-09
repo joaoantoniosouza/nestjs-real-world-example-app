@@ -167,8 +167,10 @@ export class ArticleService {
   }
 
   async addComment(userId: number, slug: string, comment: CommentCreateDTO) {
-    const user = await this.userRepository.findOne(userId);
-    const article = await this.articleRepository.findOne({ slug });
+    const [user, article] = await Promise.all([
+      this.userRepository.findOne(userId),
+      this.articleRepository.findOne({ slug }),
+    ]);
 
     if (!article) {
       throw new ArticleNotFoundException();
