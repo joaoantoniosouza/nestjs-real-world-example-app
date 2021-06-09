@@ -1,9 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '~/user/user.entity';
 import { ArticleEntity } from './article.entity';
+import { CommentEntity } from './comment.entity';
 import { ArticleUpdateDTO } from './dto';
+import { CommentCreateDTO } from './dto/comment-create.dto';
+import { ArticleNotFoundException } from './exceptions/article-not-found.exception';
 
 type ListOptions = {
   tag?: string;
@@ -20,6 +23,8 @@ export class ArticleService {
     private readonly articleRepository: Repository<ArticleEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(CommentEntity)
+    private readonly commentRepository: Repository<CommentEntity>,
   ) {}
 
   async create(articleData: ArticleUpdateDTO, userId: number) {
@@ -40,7 +45,7 @@ export class ArticleService {
     });
 
     if (!article) {
-      throw new NotFoundException('Artigo não encontrado.');
+      throw new ArticleNotFoundException();
     }
 
     return this.articleRepository.save({
@@ -99,7 +104,7 @@ export class ArticleService {
     });
 
     if (!article) {
-      throw new NotFoundException('Artigo não encontrado.');
+      throw new ArticleNotFoundException();
     }
 
     const articleIsFavorite = article.usersFavorites.find(
@@ -127,7 +132,7 @@ export class ArticleService {
     });
 
     if (!article) {
-      throw new NotFoundException('Artigo não encontrado.');
+      throw new ArticleNotFoundException();
     }
 
     const indexToRemove = article.usersFavorites.findIndex(
@@ -143,5 +148,46 @@ export class ArticleService {
     }
 
     return article;
+  }
+
+  async getComments(slug: string) {
+    const comments = await this.commentRepository
+      .createQueryBuilder('comments')
+      .innerJoin('comments.article', 'article')
+      .innerJoinAndSelect('comments.author', 'author')
+      .where('article.slug = :slug', { slug })
+      .getMany();
+
+    if (!comments.length) {
+      throw new ArticleNotFoundException();
+    }
+
+    return comments;
+  }
+
+  async addComment(userId: number, slug: string, comment: CommentCreateDTO) {
+    const user = await this.userRepository.findOne(userId);
+    const article = await this.articleRepository.findOne({ slug });
+
+    if (!article) {
+      throw new ArticleNotFoundException();
+    }
+
+    const newComment = this.commentRepository.create(comment);
+
+    newComment.author = user;
+    newComment.article = article;
+
+    return this.commentRepository.save(newComment);
+  }
+
+  async deleteComment(slug: string, commentId: number) {
+    const article = await this.articleRepository.findOne({ slug });
+
+    if (!article) {
+      throw new ArticleNotFoundException();
+    }
+
+    return this.commentRepository.delete({ id: commentId });
   }
 }

@@ -15,6 +15,8 @@ import { User } from '~/user/decorators/user.decorator';
 import { JwtAuthGuard } from '~/user/guards/jwt.guard';
 import { ArticleService } from './article.service';
 import { ArticleUpdateDTO, ArticleReadDTO } from './dto';
+import { CommentCreateDTO } from './dto/comment-create.dto';
+import { CommentReadDTO } from './dto/comment-read.dto';
 import { ArticleAuthorizationGuard } from './guard/article-authorization.guard';
 
 @Controller('articles')
@@ -97,5 +99,40 @@ export class ArticleController {
     const article = await this.articleService.unFavorite(userId, slug);
 
     return { article: new ArticleReadDTO(article) };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':slug/comments')
+  async getComments(@Param('slug') slug: string) {
+    const comments = await this.articleService.getComments(slug);
+
+    return comments.map((comment) => new CommentReadDTO(comment));
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':slug/comments')
+  async addComment(
+    @User('id') userId: number,
+    @Param('slug') slug: string,
+    @Body('comment') comment: CommentCreateDTO,
+  ) {
+    const newComment = await this.articleService.addComment(
+      userId,
+      slug,
+      comment,
+    );
+
+    return new CommentReadDTO(newComment);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':slug/comments/:id')
+  async deleteComment(
+    @Param('slug') slug: string,
+    @Param('id') commentId: number,
+  ) {
+    await this.articleService.deleteComment(slug, commentId);
+
+    return { message: 'Comentário deletado.' };
   }
 }
