@@ -89,9 +89,10 @@ export class ArticleService {
   async getFeed(userId: number) {
     return this.articleRepository
       .createQueryBuilder('articles')
-      .innerJoin('articles.author', 'author')
+      .innerJoinAndSelect('articles.author', 'author')
       .innerJoin('author.follows', 'follows')
       .where('follows.followerId = :userId', { userId })
+      .orderBy('articles.createdAt', 'DESC')
       .getMany();
   }
 
