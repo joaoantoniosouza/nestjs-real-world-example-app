@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { UserEntity } from '~/user/user.entity';
 import { ArticleEntity } from './article.entity';
 import { CommentEntity } from './comment.entity';
-import { ArticleUpdateDTO } from './dto';
+import { ArticleUpdateDTO, ArticleCreateDTO } from './dto';
 import { CommentCreateDTO } from './dto/comment-create.dto';
 import { ArticleNotFoundException } from './exceptions/article-not-found.exception';
 
@@ -27,7 +27,7 @@ export class ArticleService {
     private readonly commentRepository: Repository<CommentEntity>,
   ) {}
 
-  async create(articleData: ArticleUpdateDTO, userId: number) {
+  async create(articleData: ArticleCreateDTO, userId: number) {
     const newArticle = this.articleRepository.create(articleData);
 
     const author = await this.userRepository.findOne(userId);
